@@ -1,0 +1,108 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Update Course";
+}
+
+<form id="myForm" onsubmit="return window.confirm('Are you sure you want to update ' + $('#courseID option:selected').text() + '? Prerequisites will be overwritten.')">
+    <div class="container">
+        <h2>Update a Course</h2>
+            
+            <label for="courseID">Select Course to Modify:</label>
+            <div class="form-select">
+                <select name="courseID" id="courseID" class="form-control">
+                @{
+                    foreach (string[] c in ViewData["allcourses"] as List<string[]>)
+                    {
+                                                                        @:<option value="@c[0]">@c[1]</option>
+                    }
+                }
+                </select>
+            </div>
+
+            <label for="dep">New Department:</label>
+            <div class="form-group">
+            <select name="dep" id="dep" class="form-control">
+            @{
+                foreach (var d in ViewData["departments"] as Dictionary<string, int>)
+                    {
+                        @:<option value="@d.Value">@d.Key</option>
+                    }
+            }
+            </select>
+            </div>
+
+            <div class="form-group">
+                <label for="courseNumber">New Course Number:</label>
+                <input type="text" class="form-control" id="courseNumber" placeholder="101" name="courseNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="courseDescription">New Course Description:</label>
+                <input type="text" class="form-control" id="courseDescription" placeholder="Learn basic API calls, AJAX, Jquery, JavaScript, AWS, HTML etc." name="courseDescription" required>
+            </div>
+
+            <div class="form-group">
+            <div class="input-group mb-3">
+            <label class="input-group-text" for="creditHours">New Credit Hours</label>
+            <select class="form-select" id="creditHours" name="creditHours">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                    <option selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="NC">No Credit</option>
+            </select>
+            </div>
+            </div>
+     
+            <label for="preReq">New Prerequisites:</label>
+            <div class="form-group">
+            <select name="preReq" id="preReq" multiple="multiple" class="form-control">
+            @{
+                foreach (var c in (ViewData["allcourses"] as List<string[]>))
+                    {
+                        @:<option value="@c[0]">@c[1]</option>
+                    }
+            }
+            </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Course</button>
+
+</div>
+</form>
+<script>
+
+    $(document).ready(function () {
+
+        $('#preReq').multiselect({
+            templates: { // Use the Awesome Bootstrap Checkbox structure
+                li: '<li class="checkList"><a tabindex="0"><div class="aweCheckbox aweCheckbox-danger"><label for=""></label></div></a></li>'
+            }
+        });
+        $('.multiselect-container div.aweCheckbox').each(function (index) {
+
+            var id = 'multiselect-' + index,
+                $input = $(this).find('input');
+
+            // Associate the label and the input
+            $(this).find('label').attr('for', id);
+            $input.attr('id', id);
+
+            // Remove the input from the label wrapper
+            $input.detach();
+
+            // Place the input back in before the label
+            $input.prependTo($(this));
+
+            $(this).click(function (e) {
+                // Prevents the click from bubbling up and hiding the dropdown
+                e.stopPropagation();
+            });
+
+        });
+    });
+
+
+</script>

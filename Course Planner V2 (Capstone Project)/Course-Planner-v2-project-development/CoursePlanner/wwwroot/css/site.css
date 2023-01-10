@@ -1,0 +1,365 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+*::-webkit-scrollbar {
+    width: 7px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #FFFFFF;
+    border-radius: 7px;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.sticky-top {
+    overflow-x: hidden;
+    max-height: 600px;
+    padding: 0px;
+    margin-right: 10px;
+    top: 10px;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.list-group-item {
+    width: 150px;
+}
+
+h6 {
+    font-weight: bold !important;
+}
+
+.noPadLeft {
+    padding-left: 0px;
+}
+
+.noPadRight {
+    padding-right: 0px;
+}
+
+.mediumFont {
+    font-size: medium;
+}
+
+.breakWrap {
+    word-wrap: break-word;
+}
+
+.frosted, #frosted {
+    background-color: rgba(255,255,255,0.9);
+}
+
+#selectPlanList {
+    margin-bottom: 100px;
+}
+
+/* EditPlan specific style
+-------------------------------------------------- */
+.course {
+    padding: 0px 0px 0px 5px;
+    overflow: auto;
+    text-align: left;
+    margin-bottom: 5px;
+    line-height: normal;
+    background-color: white;
+}
+
+#semester {
+    padding: 0px;
+}
+
+.semester {
+    padding-left: 5px;
+    padding-right: 5px;
+    min-height: 500px;
+}
+
+#already-completed {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.controlButton {
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+.removeButtonClass {
+    line-height: 100%;
+    font-weight: bold;
+    border-width: 1px;
+}
+
+    .removeButtonClass:hover {
+        background-color: red;
+    }
+
+.requirement {
+    margin-top: 0rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.yearCol {
+    min-width: 485px;
+    padding: 0px 5px 0px 0px;
+}
+
+#savedDiv {
+    text-align: right;
+}
+
+#already-completed-semester {
+    border-style: solid;
+    border-width: 1px;
+    padding: 0px 5px !important;
+    width: 100%;
+    min-height: 500px;
+}
+
+#already-completed {
+    font-size: xx-large;
+    width: 100%;
+    visibility: visible;
+    padding: 0.375rem 0.75rem;
+    margin-left: 0px;
+}
+
+.yearContainer {
+    border-radius: 20px;
+    margin: 0px !important;
+    padding-left: 0px;
+}
+
+.yearCollapseButton {
+    font-size: xx-large;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+}
+
+#courseList, #courseGroup {
+    min-width: min-content;
+    margin-right: 5px;
+}
+
+#controlButtonRow {
+    width: fit-content;
+    padding-bottom: 0px !important;
+}
+
+#whiteCheck {
+    visibility: hidden;
+    display: none;
+}
+
+#enterComment {
+    max-width: 1000px;
+    padding: 0px 0px 15px;
+}
+
+#comment-div {
+    max-width: 1000px;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 400px;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 18px; /*14px*/
+}
+
+@media (min-width: 865px) {
+    html {
+        font-size: 22px; /*16*/
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+
+/*======================================================================================*/
+body {
+    padding: 20px;
+}
+
+form {
+    margin: auto;
+}
+
+.aweCheckbox {
+    padding-left: 20px;
+}
+
+    .aweCheckbox label {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        padding: 0 20px 0 10px;
+        cursor: pointer;
+    }
+
+        .aweCheckbox label::before {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            width: 17px;
+            height: 17px;
+            left: 0;
+            margin-left: -20px;
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            background-color: #fff;
+            -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+            -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+            transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+        }
+
+        .aweCheckbox label::after {
+            display: inline-block;
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 0;
+            top: 0;
+            margin-left: -20px;
+            padding-left: 3px;
+            padding-top: 1px;
+            font-size: 11px;
+            color: #555555;
+        }
+
+    .aweCheckbox input[type="checkbox"] {
+        opacity: 0;
+        z-index: 1;
+    }
+
+        .aweCheckbox input[type="checkbox"]:focus + label::before {
+            outline: thin dotted;
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px;
+        }
+
+        .aweCheckbox input[type="checkbox"]:checked + label::after {
+            font-family: "FontAwesome";
+            content: "\f00c";
+        }
+
+        .aweCheckbox input[type="checkbox"]:indeterminate + label::after {
+            display: block;
+            content: "";
+            width: 10px;
+            height: 3px;
+            background-color: #555555;
+            border-radius: 2px;
+            margin-top: 7px;
+        }
+
+        .aweCheckbox input[type="checkbox"]:disabled + label {
+            opacity: 0.65;
+        }
+
+            .aweCheckbox input[type="checkbox"]:disabled + label::before {
+                background-color: #eeeeee;
+                cursor: not-allowed;
+            }
+
+    .aweCheckbox.aweCheckbox-circle label::before {
+        border-radius: 50%;
+    }
+
+    .aweCheckbox.aweCheckbox-inline {
+        margin-top: 0;
+    }
+
+.aweCheckbox-danger input[type="checkbox"]:checked + label::before {
+    background-color: #d9534f;
+    border-color: #d9534f;
+}
+
+.aweCheckbox-danger input[type="checkbox"]:checked + label::after {
+    color: #fff;
+}
+
+.aweCheckbox-danger input[type="checkbox"]:indeterminate + label::before {
+    background-color: #d9534f;
+    border-color: #d9534f;
+}
+
+.aweCheckbox-danger input[type="checkbox"]:indeterminate + label::after {
+    background-color: #fff;
+}
+
+input[type="checkbox"].styled:checked + label:after {
+    font-family: 'FontAwesome';
+    content: "\f00c";
+}
+
+input[type="checkbox"] .styled:checked + label::before {
+    color: #fff;
+}
+
+input[type="checkbox"] .styled:checked + label::after {
+    color: #fff;
+}
+
+/*=========================================================================*/

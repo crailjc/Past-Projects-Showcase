@@ -1,0 +1,32 @@
+﻿<div>
+    <div class="text-center">
+        <table class="table table-hover user-select-none frosted" id="selectPlanList">
+            <thead>
+                <tr>
+                    <th>Plan Name</th>
+                    <th>Enrolled Year</th>
+                    <th>Enrolled Season</th>
+                    <th>Plan Length</th>
+                    <th>Degree</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (PlanDetail plan in (List<PlanDetail>)ViewData["plans"])
+                {
+                    <tr value="@plan.PlanID">
+                        <td class="align-middle">@plan.PlanName</td>
+                        <td class="align-middle">@plan.EnrollYear</td>
+                        <td class="align-middle">@plan.EnrollSeason</td>
+                        <td class="align-middle">@plan.PlanLength</td>
+                        <td class="align-middle">@plan.DegreeName</td>
+                        <td class="align-middle">
+                            <a class="btn btn-primary h-50" href="@Url.Action("EditPlan", "Plan", new{ planID = @plan.PlanID })">Edit</a>
+                            <a class="btn btn-danger h-50" onclick="return confirm('Are you sure you want to delete this plan?');" href="@Url.Action("DeletePlan", "Plan", new { planID = @plan.PlanID })">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>        
+    </div>
+</div>

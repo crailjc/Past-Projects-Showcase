@@ -1,0 +1,36 @@
+﻿<div class="text-center">
+    <h1>Login to Course Planner</h1>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function handleCredentialResponse(response) {
+            /*
+            a = $.ajax({
+               url: "/api/UserController/login?idToken=" + String(response.credential),
+               method: "GET"
+            }).done(function() {
+                window.location.pathname = '/User/Home';
+            })
+            */
+            console.log("Encoded JWT ID token: " + response.credential);
+            var url = '/User/Login';
+            var form = $('<form action="' + url + '" method="post">' +
+                '<input type="text" name="IdToken" value="' + String(response.credential) + '" />' +
+                '</form>');
+            $('body').append(form);
+            form.submit();
+            // window.location.href = "/User/Login?idToken=" + String(response.credential);
+        }
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "814089137112-gvdprgadav0ef7dv476r1pdutba8hn41.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }  // customization attributes
+            );
+            google.accounts.id.prompt(); // also display the One Tap dialog
+        }</script>
+    <div id="buttonDiv"></div>
+</div>
+

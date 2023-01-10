@@ -1,0 +1,723 @@
+@{
+    ViewData["Title"] = "Edit Plan";
+}
+
+@* <script src="~/js/site.js?v=B7GS7HFyxz4pmMXZWmvsR6XHKc766xywbThI5OjHyic"></script>
+    <link rel="stylesheet" href="~/css/site.css"> *@
+
+<!-- START OF JAVA SCRIPT-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js"></script>
+
+<script>
+    //const { Collapse } = require("../../wwwroot/lib/bootstrap/dist/js/bootstrap");
+    $('#pageContainer').css("padding-left", "5px"); // set css for containing div only for this page
+
+    Mousetrap.bind(['ctrl+p', 'command+p'], function (e) { // set ctrl p to custom print
+        PrintFunction();
+        return false;
+    });
+
+    var year;
+    var value;
+    var data;
+    var totalCredit = 0;
+    var order = 0;
+    var currentSelection = "All";
+    var reg = /\s+/;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var checkbox = document.querySelector('input[type="checkbox"]');
+
+        checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+                // do this
+                //console.log('Checked');
+                document.body.style.backgroundImage = "";
+                $("#whiteCheckButton").removeClass("btn-light");
+                $("#whiteCheckButton").addClass("btn-info");
+                $('body').css('backgroundImage', 'url("")');
+
+            } else {
+                // do that
+                //console.log('Not checked');
+                document.body.style.backgroundImage = "";
+                $("#whiteCheckButton").removeClass("btn-info");
+                $("#whiteCheckButton").addClass("btn-light");
+                $('body').css('backgroundImage', 'url("https://ceclnx01.cec.miamioh.edu/~crailjc/images/BentonFinal.png")');
+            }
+        });
+    });
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+        // Check if the user is hover over the semester
+        if (ev.target.id.includes("semester")) {
+            // Update the current node
+            currentCredits(ev.target.id, 0)
+            // The user is hovering over a course
+        } else {
+            // Update the parent node
+            currentCredits(ev.target.parentNode.id, 0)
+        }
+        // Set the drop effect
+        ev.dataTransfer.dropEffect = "move"
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function setYear(y) {
+        year = y
+    }
+
+    // This function creates a clone of the class that is being dragged
+    function drop(ev) {
+        data = ev.dataTransfer.getData("text");
+        var tg = document.getElementById(ev.target.id);
+        var allowdrop = true;
+        var elem = document.getElementById(data);
+    @*var requirement = elem.getAttribute("requirement").split(reg)*@
+        if (data.stye != null && data.style.backgroundColor == "green") {
+            allowdrop = false;
+        }
+        if (tg.nodeName != "A" && allowdrop) {
+            // Prevent default behavior
+            ev.preventDefault();
+
+            // Get the current course and parent that the user is hovering over
+            var course = document.getElementById(data);
+            var parent = ev.target.id.includes("semester") ? ev.target : ev.target.parentNode
+            if (parent.style.visibility == 'hidden') {
+                alert("You can't place that course there. This is because the section is collapsed");
+                return;
+            }
+            // Check if the pre-reqs are satified
+            if (checkForPreReqs(document.getElementById(data), parent) && checkForDuplicate(course)) {
+                // Add the course
+
+                //creating a copy of the original course from the list so that we can drag the copy over
+                //and leave the original in the course list
+                var nodeCopy = document.getElementById(data).cloneNode(true);
+
+                //creating a button to allow someeone to remove the course by clicking a button
+                var button = document.createElement("button");
+                button.classList.add("removeButtonClass", "btn", "btn-outline-danger", "btn-sm", "float-right", "shadow-none", "collapseOnPrint");
+                button.innerHTML = "X";
+
+                //when they click the button the highlight goes back to default and it removes the copy
+                button.onclick = function () {
+                    document.getElementById(course.id).style.backgroundColor = "white";
+                    nodeCopy.remove();
+                    currentCredits(parent.id, 0);
+                    generateJSON(this);
+                };
+
+                //adding the button to the copy
+                nodeCopy.appendChild(button);
+                nodeCopy.id = "newId"; /* We cannot use the same ID */
+
+                //adding the copy to the page
+                ev.currentTarget.append(nodeCopy);
+                generateJSON(this);
+                //setting background color for dynamically loading the courses from the saved plan
+                $("#" + data).each(function () {
+                    $(this).css("background-color", "green")
+                });
+                currentCredits(parent.id, 0)
+            } else {
+                alert("You can't place that course there. This can be because you already placed the course somewhere else or you are required to take other classes before you can select this one")
+            }
+        }
+    }
+
+    //Get total credits for a certain semester
+    function currentCredits(id, extra) {
+        var child = $("#" + id).children();
+        var creditHours = 0;
+        var i;
+        for (i = 0; i < child.length; i++) {
+            var currentChild = child[i];
+            if ($(currentChild).hasClass("course")) {
+                creditHours += Number($(currentChild).attr("data-credit"))
+            }
+        }
+
+        $("#" + id + " #credit-hours").html("Credits: " + (creditHours + extra))
+    }
+
+    function addYear(obj) {
+        a = $.ajax({
+            url: "/api/PlanApi/semester/add?planID=" + @ViewData["planID"],
+            success: function (result) {
+                if (result) {
+                    window.location.reload();
+                } else {
+                    alert("Something went wrong, please try again later");
+                }
+            }
+        })
+    }
+
+    function deleteYear(button) {
+        if (!window.confirm('Are you sure you want to delete this year?')) {
+            return;
+        }
+        var id = $(button).parent().attr("id");
+        var sems = ["fall-", "winter-", "summer-", "spring-"];
+        var ids = "";
+        for (var i = 0; i < sems.length; i++) {
+            var semID = $("#" + sems[i] + id).attr("sem-id");
+            ids += semID + (i + 1 == sems.length ? "" : ",");
+        }
+        a = $.ajax({
+            url: "/api/PlanApi/semester/remove?planID=" + @ViewData["planID"] + "&semIDs=" + ids,
+            success: function (result) {
+                if (result) {
+                    window.location.reload();
+                } else {
+                    alert("Something went wrong, please try again later");
+                }
+            }
+        })
+    }
+
+    /*Fliter courses by requirments*/
+    function selectRequirment4(groupID) {
+        currentSelection = "g" + groupID;
+        //console.log("Hello");
+        var children = $("#courseList").children().each(function () {
+            if ($(this).hasClass("course")) {
+                var cid = $(this).attr("c-id")
+                var requirement = $(this).attr("requirement")
+                if (requirement.indexOf(currentSelection) != -1) {
+                    $(this).removeClass("d-none");
+                } else {
+                    $(this).addClass("d-none");
+                }
+            }
+        });
+    }
+
+    function createCompletedTopButton() {
+        var yearbtn = $("<button id='top-already-completed'>Completed Courses</button>");
+        yearbtn.addClass("btn shadow-none btn-primary collapseOnPrint");
+        yearbtn.css("margin", "0px 5px 5px 0px");
+        yearbtn.click(function () {
+            $('div[id^="semester-"]').hide();
+            $('button[id^="top-"]').addClass("btn-secondary");
+            $('button[id^="top-"]').removeClass("btn-primary");
+            yearbtn.addClass("btn-primary");
+            yearbtn.removeClass("btn-secondary");
+            $('#already-completed-semester').show();
+            $('#already-completed').show();
+        });
+        $('#yeartabs').append(yearbtn);
+    }
+
+    function createTopButton(btn) {
+        var yearbtn = $("<button id='top-" + btn + "'>" + btn + "</button>");
+        yearbtn.addClass("btn shadow-none btn-secondary collapseOnPrint");
+        yearbtn.css("margin", "0px 5px 5px 0px");
+        yearbtn.click(function () {
+            $('div[id^="semester-"]').hide();
+            $('#already-completed').hide();
+            $('#already-completed-semester').hide();
+            $('button[id^="top-"]').addClass("btn-secondary");
+            $('button[id^="top-"]').removeClass("btn-primary");
+            yearbtn.addClass("btn-primary");
+            yearbtn.removeClass("btn-secondary");
+            $('#semester-' + btn).show();
+        });
+        $('#yeartabs').append(yearbtn);
+    }
+
+    /*Collect all the information of the plan,
+     * and then generate Json object to be sent. */
+    function generateJSON(btn) {
+        $(".changesSaved").html("Changes not yet saved.");
+        var json = {};
+        var semesters = []; //This variable store ALL the semesters.
+        var years = document.getElementById("semester").children;
+
+        for (var i = 0; i < years.length; i++) {
+
+            //The html structure of the div of Already-Completed-Semester is different with the other semesters' div, so its information
+            //need to be collected separately.
+            if (years[i].id.includes("already-completed-semester")) {
+                var semester = {}; //This variable store all the information of a SINGLE semester.
+                var courses = []; //Information of the courses.
+                // Get the semester ID
+                var semesterID = parseInt($(years[i]).attr("sem-id"));
+                semester["semesterID"] = semesterID;
+                $(years[i]).children().each(function () {
+                    // Check if it's a course
+                    if ($(this).hasClass("course")) {
+                        // Add the course ID to the list
+                        courses.push(parseInt($(this).attr("c-id")));
+                    }
+                })
+                semester["courses"] = courses;
+                semesters.push(semester);
+            } else if (years[i].id.includes("semester-")) {
+                // Get the courses
+                var children = years[i].children;
+                // Iterate through each children
+                $(years[i]).children().each(function () {
+                    var semester = {};
+                    var courses = [];
+                    var id = $(this).attr("id")
+                    if (id != null && (id.includes("semester-")) && (!id.includes("button") && !id.includes("delete"))) {
+                        // Get the semester ID
+                        var semesterID = parseInt($(this).attr("sem-id"));
+                        semester["semesterID"] = semesterID;
+                        $(this).children().each(function () {
+                            // Check if it's a course
+                            if ($(this).hasClass("course")) {
+                                // Add the course ID to the list
+                                courses.push(parseInt($(this).attr("c-id")));
+                            }
+                        })
+                        semester["courses"] = courses;
+                        semesters.push(semester);
+                    }
+                })
+            }
+        }
+        json.semesters = semesters;
+        json.miamiID = $("#miamiID").val();
+        sendJSON(json);
+    }
+
+    /*Send Json object to backend API*/
+    function sendJSON(json) {
+        const xhttp = new XMLHttpRequest();
+        var jsonData = JSON.stringify(json)
+        $.ajax({
+            method: "POST",
+            url: "/api/PlanApi/savePlan",
+            data: jsonData,
+            contentType: "application/json",
+            dataType: "json",
+            beforeSend: function (xhttp) {
+                //console.log("ready");
+            },
+            success: function (xhttp, json, textStatus) {
+                updateSave(true);
+
+            },
+            error: function (xhttp, json, textStatus) {
+                updateSave(false);
+                alert("Saving failed. Status: " + xhttp.status + ".");
+
+            }
+
+        });
+    }
+
+    /**
+     *  Changes the Saved Changes Text to show a save has been made
+     */
+    function updateSave(success) {
+        if (success) {
+            var currTime = new Date().toLocaleTimeString().replace(/ /g, '').toLowerCase();
+            $(".changesSaved").html("All changes saved at: " + currTime);
+        } else {
+            $(".changesSaved").html("An Error has occured");
+        }
+    }
+
+    /**
+     * Checks if the given course is already selected
+     */
+    function checkForDuplicate(course) {
+        var passed = true
+        $("div[order]").each(function () {
+            // Iterate through the children
+            $(this).children().each(function () {
+                // Check if this is currently a course
+                if ($(this).hasClass('course')) {
+                    if ($(this).attr("c-id") == $(course).attr("c-id")) {
+                        passed = false
+                    }
+                }
+            })
+        })
+        return passed
+    }
+
+    /**
+    * Checks the given class if the pre-requsities are
+    * satisfied for the given course
+    * Return true if the pre-reqs are satisfied, false otherwise
+    */
+    function checkForPreReqs(course, semester) {
+        // Get the current order of the given semester
+        semesterOrder = $(semester).attr("order")
+        if ($(course).attr("prereqs") == "" || semesterOrder == "1") {
+            return true
+        }
+        // Store the required classes of the course (TODO)
+        var requiredClasses = JSON.parse($(course).attr("prereqs"))
+        // Get the current course id
+        courseID = $(course).attr("c-id")
+        // Iterate through all of the previous semesters
+        for (var i = 1; i < semesterOrder; i++) {
+            // Get the current semester
+            $('div[order="' + i + '"]').each(function (index) {
+                // Iterate through the children
+                $(this).children().each(function () {
+                    // Check if this is currently a course
+                    if ($(this).hasClass('course')) {
+                        // Add the course to the completed list
+                        var id = $(this).attr("c-id")
+                        //console.log(requiredClasses)
+                        for (var i = requiredClasses.length - 1; i >= 0; i--) {
+                            if (requiredClasses[i].includes(parseInt(id))) {
+                                requiredClasses.splice(i, 1);
+                            }
+                        }
+                    }
+                })
+            })
+        }
+        // Return true if all of the required classes are gone
+        return requiredClasses.length == 0
+    }
+
+    /**
+     * Adds a comment to the current plan. Uses the comment-content textarea
+     * for getting the content of the comment. It will also use the current time
+     * in logging in the time the comment was added
+     * */
+    function addComment() {
+        // Get the content
+        var content = $("#comment-content").val().trim()
+        if (content == '') {
+            return;
+        }
+        // Get the planId
+        var planID = @ViewData["planID"]
+            // Perform the ajax call to add the comment
+            $.ajax({
+                type: "post",
+                url: "/api/comments?planID=" + planID + "&content=" + content
+            });
+        // Get the current date information
+        var date = new Date()
+        const days = ["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"];
+        const months = ["January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"];
+        var day = days[date.getDay()];
+        var month = months[date.getMonth()];
+        var d = date.getDate();
+        var year = date.getFullYear();
+        var minutes = date.getMinutes();
+        var hours = date.getHours() % 12;
+        var i = date.getHours() >= 12 ? "pm" : "am"
+        // Add the comment to the current page
+        $("#comment-div").prepend(`<div class="row rounded border border-dark frosted">
+                <div class="col-12 row mediumFont">
+                    <div class="col-6 text-left"><u>` + "@ViewData["miamiID"]" + `</u></div>
+                    <div class="col-6 text-right">` + day + " " + month + " " + d + " " + year + " " + (hours < 10 ? "0" : "")
+            + hours + ":" + (minutes < 10 ? "0" : "") + minutes + " " + i + `</div>
+                </div>
+                <div class="col-12 breakWrap">
+                    ` + content + `
+                </div>
+            </div>`)
+        $('#comment-content').val('');
+    }
+
+
+    function PrintFunction() {
+
+        // set background to white
+        document.body.style.backgroundImage = "";
+        $('body').css('backgroundImage', 'url("")');
+
+        // collapse all collapseOnPrint
+        $('.collapseOnPrint').each(function () {
+            $(this).css("display", "none");
+        });
+
+        // set comment secton bottom margin to 0px
+        $('#comment-div').each(function () {
+            $(this).css("margin-bottom", "0px");
+        });
+
+        // set min height for semester sections
+        $('div[id*="-semester"]').css("min-height", "fit-content");
+
+        // only expand already-completed
+        $('#already-completed').show();
+        $('#already-completed-semester').show();
+
+        $('div[id^="semester-"]').show();
+        // loop through and make all semsters expanded (will work regardless of number of semesters)
+
+        window.print();
+        location.reload();
+    }
+</script>
+
+<!-- END OF JAVA SCRIPT-->
+<!-- START OF HTML-->
+<body>
+    <input type="hidden" id="miamiID" value="@ViewData["miamiID"]">
+    <div class="collapseOnPrint" id="savedDiv">
+        <h4 class="changesSaved">All changes saved.</h4>
+    </div>
+    <!-- Cloumn with all of the course info in it-->
+    <div class="container-fluid noPadRight">
+        <div class="row">
+            <div class="col yearCol">
+                <div class="col collapseOnPrint" id="genInfo">
+                    <h1 class="text-center">Edit Your Plan</h1>
+                    <h6>DISCLAIMER: This sheet is to be used ONLY AS A GUIDE. CoursePlanner is under heavy development and may not calculate for the correct sequential order of pre-reqs or any variations or exceptions your degree may require. Please continue to meet regularly with your CSE Advisor.</h6>
+                </div>
+                <div class="yeartabs" id="yeartabs"></div>
+                <div id="semester" class="container-fluid">
+                    <button class="btn btn-secondary btn-lg btn-block border-dark shadow-none" id="already-completed">
+                        Completed Courses
+                    </button>
+                    <div class="pb-5 frosted" id="already-completed-semester" ondrop="drop(event)" order="1" ondragover="allowDrop(event)" sem-id="@ViewData["CompSemID"]">
+                        <script>
+                            createCompletedTopButton()
+                        </script>
+                        @foreach (var course in (ViewData["organized"] as SortedDictionary<string, SortedDictionary<string, SemesterInfo>>)["Completed"]["Completed"].Plan.courses)
+                        {
+                            if (course.Course.CourseID != 0)
+                            {
+                        // This is only used when classes are being loaded from the page
+                                <div class="course col-12 text-wrap border rounded border-dark" draggable="true" ondragstart="drag(event)" id="newId" c-id=@course.Course.CourseID data-credit=@course.Course.CreditHours>
+                                    @course.DepartmentAbbr @course.Course.CourseName
+                                    <button class="removeButtonClass btn btn-outline-danger btn-sm float-right shadow-none collapseOnPrint" onclick='var parent = $(this).parent(); var semester = $(parent).parent(); $("#@course.Course.CourseID").css("background-color", "white"); $(parent).remove(); currentCredits($(semester).attr("id"), 0);generateJSON(this);'>
+                                        X
+                                    </button>
+                                </div>
+                            }
+                        }
+                    </div>
+                    @for (int index = 0; index < (ViewData["organized"] as SortedDictionary<string, SortedDictionary<string, SemesterInfo>>).Count; index++)
+                    {
+                        var keys = (ViewData["organized"] as SortedDictionary<string, SortedDictionary<string, SemesterInfo>>).Keys.ToList<string>();
+                        if (keys[index] == "Completed")
+                        {
+                            continue;
+                        }
+                        var s = (ViewData["organized"] as SortedDictionary<string, SortedDictionary<string, SemesterInfo>>)[keys[index]];
+                        var baseClass = "col-3 pb-5 border border-dark ";
+                        var buttonBaseClass = "btn btn-light ";
+
+                        var id = "semester-" + keys[index];
+                        var ecButton = "button-" + keys[index];
+
+                        var deleteID = "delete-semester-" + keys[index];
+
+
+                        // Arrays for the ID, Class, ButtonClass, ButtonID, and SemID
+                        String[] SeasonID_Vals = { "fall-semester-", "winter-semester-", "spring-semester-", "summer-semester-" };
+                        String[] Season_Vals = { "Fall", "Winter", "Spring", "Summer" };
+                        String[] Season_Vals_Button = { "fall-semester-button-", "winter-semester-", "spring-semester-button-", "summer-semester-" };
+                        String[] SeasonID = { "none", "none", "none", "none" };
+                        String[] SeasonClass = { "none", "none", "none", "none" };
+                        String[] SeasonButtonClass = { "none", "none", "none", "none" };
+                        String[] SeasonButtonID = { "none", "none", "none", "none" };
+                        int[] SeasonSemID = { 0, 0, 0, 0 };
+
+                        // This int array is for the ordering of the seasons for the semester
+                        // 2 is fall, 3 is winter, 4 is spring, 5 is fall for the addition with the scalar
+                        var numScalar = index * 4;
+                        int[] SeasonOrder = { (2 + numScalar), (3 + numScalar), (4 + numScalar), (5 + numScalar) };
+
+                        // Loop through and generate the general info that is used for each semester
+                        for (int i = 0; i < 4; i++)
+                        {
+                            SeasonID[i] = SeasonID_Vals[i] + keys[index];
+                            SeasonClass[i] = baseClass + (!s.ContainsKey(Season_Vals[i]) ? "d-none" : "");
+                            SeasonButtonClass[i] = buttonBaseClass + (s.ContainsKey(Season_Vals[i]) ? "d-none" : "");
+                            if (i == 1 || i == 3)
+                            { // This is for winter and summer classes they must be formatted this way
+                                SeasonButtonID[i] = Season_Vals_Button[i] + keys[index] + "-button";
+                            }
+                            else
+                            { // This is for fall and spring classes they do not need -button at the end
+                                SeasonButtonID[i] = Season_Vals_Button[i] + keys[index];
+                            }
+                            SeasonSemID[i] = s[Season_Vals[i]].SemesterID;
+                        }
+
+                        <div class="yearContainer row justify-content-around my-5 text-center" id="@id">
+                            <script>
+                                $('#@id').hide();
+                                setYear("@keys[index]")
+                            </script>
+                            <button id=@ecButton class="yearCollapseButton btn btn-secondary btn-lg btn-block shadow-none">@keys[index]</button>
+                            <script>
+                                createTopButton('@keys[index]')
+                            </script>
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                // This loop is used for generating each season in each semester 0 = Fall, 2 = Winter, 2 = Spring, 3 = Summer
+                                <div class="semester @SeasonClass[i] col border border-black frosted" ondrop="drop(event)" ondragover="allowDrop(event)" id="@SeasonID[i]" order="@(SeasonOrder[i])" sem-id="@SeasonSemID[i]">
+                                    @if (@s.ContainsKey(Season_Vals[i]))
+                                    {
+                                        <h6 id="my-2"> @Season_Vals[i] </h6>
+                                        <h6 id="credit-hours">Credits: @s[Season_Vals[i]].GetTotalCredits() </h6>
+                                        @foreach (var course in s[Season_Vals[i]].Plan.courses)
+                                        {
+                                            if (course.Course.CourseID != 0)
+                                            {
+                                            // This is only used when classes are being loaded from the page
+                                                <div class="course col-12 text-wrap border rounded border-dark" draggable="true" ondragstart="drag(event)" id="newId" c-id=@course.Course.CourseID data-credit=@course.Course.CreditHours>
+                                                    @course.DepartmentAbbr @course.Course.CourseName
+                                                    <button class="removeButtonClass btn btn-outline-danger btn-sm float-right shadow-none collapseOnPrint" onclick='var parent = $(this).parent(); var semester = $(parent).parent(); $("#@course.Course.CourseID").css("background-color", "white"); $(parent).remove(); currentCredits($(semester).attr("id"), 0);generateJSON(this);'>
+                                                        X
+                                                    </button>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            }
+
+                            <button class="btn btn-danger col-12 collapseOnPrint" id="@deleteID" onclick="deleteYear(this)">
+                                Delete Year
+                            </button>
+                        </div>
+                    }
+                    @* <div class="row"> *@
+                    @* </div> *@
+                </div>
+            </div>
+            <!-- This is for loading the courses onto the web page-->
+            <div class="col-1 sticky-top collapseOnPrint" id="courseList" ondrop="drop(event)" ondragover="allowDrop(event)">
+                @{
+                    // Create a new list to store the loaded courses
+                    ViewData["loaded"] = new List<int>();
+                }
+                @foreach (var x in (ViewData["groups"] as SortedDictionary<CourseGroup, List<CourseDetail>>))
+                {
+                    // Itereate through all of thee courses
+                    foreach (var course in x.Value)
+                    {
+                        // Get the current course group
+                        var req = "g" + course.GroupID;
+                        // Get the start of the background color
+                        var style = "background-color: ";
+                        // Check if the course has been saved
+                        if ((ViewData["courses"] as List<int>).Contains(course.CourseID))
+                        {
+                            // Configure a green background
+                            style += "green";
+                        }
+                        else
+                        {
+                            // Configure a white background
+                            style += "white";
+                        }
+                        // Check if the course has been loaded on the screen
+                        if ((ViewData["loaded"] as List<int>).Contains(course.CourseID))
+                        {
+                            // Modify the existing course
+                            <script>
+                                $("#" + @course.CourseID).attr("requirement", $("#" + @course.CourseID).attr("requirement") + ",g" + "@course.GroupID")
+                            </script>
+                        }
+                        else
+                        {
+                            // IMPORTANT
+                            // Store the course in the list
+                            (ViewData["loaded"] as List<int>).Add(course.CourseID);
+                            // Create the course
+                            <div class="course col-12 text-wrap border rounded border-dark" draggable="true" style="@style" ondragstart="drag(event)" id=@course.CourseID
+                     c-id=@course.CourseID requirement=@req prereqs="@course.formatPrereqs()" data-credit=@course.Credits>
+                                @course.DepartmentName @course.CourseName
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <!-- This is for loading the group types onto the webpage-->
+            <div class="col-1 sticky-top collapseOnPrint" id="courseGroup">
+                <div class="container-fluid">
+                    <div class="row ">
+                        @foreach (var x in (ViewData["groups"] as SortedDictionary<CourseGroup, List<CourseDetail>>))
+                        {
+                            var id = "g" + x.Key.GroupID;
+                            <button onclick="selectRequirment4(@x.Key.GroupID)" class="requirement btn btn-danger text-left w-100 mt-2" id=@id>@x.Key.GroupName</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Column where comments are -->
+            <div class="col noPadLeft">
+                <div class="row py-1" id="controlButtonRow">
+                    <div class="controlButton">
+                        <button class="btn btn-primary collapseOnPrint" id="addYear" onclick="addYear(this)">Add Academic Year</button>
+                    </div>
+                    <div class="controlButton collapseOnPrint noPadLeft" id="flowChart">
+                        <a class="btn btn-info shadow-none" target="_blank" href="https://www.miamioh.edu/cec/academics/departments/cse/academics/curriculum-flowcharts/2021-2022-cs/index.html">Sample Course Plan FlowChart</a>
+                    </div>
+                    <div class="controlButton collapseOnPrint noPadLeft" id="print">
+                        <button class="btn btn-info" onclick="PrintFunction()">Print</button>
+                    </div>
+                    <div class="controlButton collapseOnPrint">
+                        <input class="btn-check shadow-none" type="checkbox" id="whiteCheck" autocomplete="off">
+                        <label class="btn btn-light" for="whiteCheck" id="whiteCheckButton">White Background</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 noPadLeft">
+                <h3>Comments</h3>
+            </div>
+            <div class="col-12 collapseOnPrint" id="enterComment">
+                <textarea id="comment-content" class="w-100 form-control" maxlength="500" rows="2" placeholder="Enter comment here..."></textarea>
+                <button class="btn btn-primary w-100 mt-1 shadow-none" id="comment" onclick="addComment()">Add Comment</button>
+            </div>
+            <!-- End of column where comments are-->
+        </div>
+        <div class="row">
+            <div class="col-12" id="comment-div">
+                @foreach (var comment in (ViewData["comments"] as CommentModel).comments.AsEnumerable().Reverse())
+                {
+                    string dateString = @comment.Date.Substring(0, @comment.Date.Length - 2) + @comment.Date.Substring(@comment.Date.Length - 2).ToLower();
+                    <div class="row rounded border border-dark frosted">
+                        <div class="col-12 row mediumFont">
+                            <div class="col-6 text-left"><u>@comment.MiamiID</u></div>
+                            <div class="col-6 text-right">@dateString</div>
+                        </div>
+                        <div class="col-12 breakWrap">
+                            @comment.Text
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default to the first group
+        window.onload = function (ev) {
+            selectRequirment4(1);
+
+            $('button[id^="button-"]').each(function () {
+                $(this).click();
+            });
+
+            $('#comment-content').keypress(function (e) {
+                if (e.which == 13) {
+                    addComment();
+                    $('#comment-content').val('').focus();
+                    return false;
+                }
+            });
+        }
+    </script>
+</body>
+
+<!-- END OF HTML-->

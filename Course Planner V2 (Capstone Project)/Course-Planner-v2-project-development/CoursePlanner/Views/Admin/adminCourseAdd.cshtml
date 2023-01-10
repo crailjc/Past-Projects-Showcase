@@ -1,0 +1,156 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Add Course";
+}
+
+<form  id='myForm' onSubmit="return confirm('Confirm all fields are correct')">
+    <div class="container">
+        <h2>Add a Course</h2>
+
+        <label for="dep">Department:</label>
+            <div class="form-group">
+            <select name="dep" id="dep" class="form-control">
+            @{
+                foreach (var d in ViewData["departments"] as Dictionary<string, int>)
+                    {
+                                                                                                                                                                                                                                                                        @:<option value="@d.Value">@d.Key</option>
+                    }
+            }
+            </select>
+            </div>
+
+        <div class="form-group">
+            <label for="courseNumber">Course Number:</label>
+            <input type="text" class="form-control" id="courseNumber" placeholder="101" name="courseNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="courseDescription">Course Description:</label>
+            <input type="text" class="form-control" id="course" placeholder="Learning outcomes, topic, etc." name="courseDescription" required>
+        </div>
+        
+
+        <div class="form-group">
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="group">Course Group:</label>
+                <select name="group" id="group" class="form-select">
+                    @{
+                        foreach (var g in (ViewData["groups"] as List<string[]>))
+                        {
+                                                                                                                                                                                                                                                                    @:<option value="@g[0]">@g[1]</option>
+                        }
+                    }
+        </select>
+        </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group mb-3">
+            <label class="input-group-text" for="creditHours">Credit Hours</label>
+                <select class="form-select" id="creditHours" name="creditHours" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                    <option selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="NC">No Credit</option>
+            </select>
+            </div>
+            </div>
+
+        <label for="preReq">Prerequisites:</label>
+        <div class="form-group">
+        <select name="preReq" id="preReq" multiple="multiple" class="form-control">
+            @{
+                foreach (var c in (ViewData["allcourses"] as List<string[]>))
+                    {
+                                                                                                                                                                                                                                                                @:<option value="@c[0]">@c[1]</option>
+                    }
+            }
+        </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Course</button>
+        <input type="file" id="csvFile" accept=".csv">
+        <button id="mybtn" class="btn btn-primary">Upload file</button>
+
+    </div>
+</form>
+
+<script>
+
+    $(document).ready(function () {
+        $('#preReq').multiselect({
+            templates: { // Use the Awesome Bootstrap Checkbox structure
+                li: '<li class="checkList"><a tabindex="0"><div class="aweCheckbox aweCheckbox-danger"><label for=""></label></div></a></li>'
+            }
+        });
+        $('#preReqTo').multiselect({
+            templates: { // Use the Awesome Bootstrap Checkbox structure
+                li: '<li class="checkList"><a tabindex="0"><div class="aweCheckbox aweCheckbox-danger"><label for=""></label></div></a></li>'
+            }
+        });
+        $('.multiselect-container div.aweCheckbox').each(function (index) {
+
+            var id = 'multiselect-' + index,
+                $input = $(this).find('input');
+
+            // Associate the label and the input
+            $(this).find('label').attr('for', id);
+            $input.attr('id', id);
+
+            // Remove the input from the label wrapper
+            $input.detach();
+
+            // Place the input back in before the label
+            $input.prependTo($(this));
+
+            $(this).click(function (e) {
+                // Prevents the click from bubbling up and hiding the dropdown
+                e.stopPropagation();
+            });
+
+        });
+        $('#mybtn').click(function (e) {
+            // Prevent the default functionality of the button
+            e.preventDefault();
+
+            const csvFile = document.getElementById("csvFile");
+            const input = csvFile.files[0];
+            const reader = new FileReader();
+
+            reader.onload = readSuccess;
+            function readSuccess(evt) {
+                const text = evt.target.result;
+                // alert(text);
+
+                // Get the headers for each column:
+                // Department,Course Number,Course Description,Course Group,Credit Hours,Prerequisites
+                const headers = text.slice(0, text.indexOf("\n")).split(",");
+                alert(headers);
+
+                // Get the rows that have the information
+                const rows = text.slice(text.indexOf("\n")).split("\n");
+                alert(rows);
+
+                // convert the rows into an array 
+                const arr = rows.map(function (row) {
+                    const values = row.split(",");
+                    const el = headers.reduce(function (object, header, index) {
+                        object[header] = values[index];
+                        return object;
+                    }, {});
+                    return el;
+                })
+                
+                // convert the array into a usable JSON object that can then be pasted to the SQL
+                const data = JSON.stringify(arr);
+                alert(data);
+
+            };
+            reader.readAsText(input);
+        });
+    });    
+
+</script>

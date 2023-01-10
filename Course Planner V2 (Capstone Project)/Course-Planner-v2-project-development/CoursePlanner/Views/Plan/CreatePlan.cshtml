@@ -1,0 +1,132 @@
+﻿<script>
+    function submitPlan() {
+        // The miami ID here is just a placeholder, it should be replaced with
+        // logged in user's miami ID later when CAS login is implemented.
+        var miamiID = $("#miamiID").val();
+        var planName = $("#planName").val();
+        var enrollYear = $("#enrollYear").val();
+        var enrollSeason = $("#enrollSeason").val();
+        var planLength = $("#planLength").val();
+        var degreeID = $("#degree").val();
+        var postPlan = JSON.stringify({
+            miamiID : miamiID,
+            planName : planName,
+            enrollYear : enrollYear,
+            enrollSeason : enrollSeason,
+            planLength : planLength,
+            degreeID : degreeID
+        });
+
+        if (planName.trim().length == 0) {
+            $("#planNameMsg").text("Plan name cannot be empty!");
+            return;
+        }
+
+        $("#planNameMsg").text("");
+        $("#ajaxMsg").text("");
+
+        console.log(postPlan);
+
+        $.ajax({
+            url: "/api/PlanApi/createPlan",
+            dataType: "json",
+            method: "POST",
+            data: postPlan,
+            contentType: "application/json"
+        }).done(function (response) {
+            if (response.status == "FAIL") {
+                $("#planNameMsg").text(response.message);
+            } else {
+                $("#ajaxMsg").text("Plan created!");
+                window.location.href = "/Plan/EditPlan?planID=" + response.message;
+            }
+        }).fail(function (error) {
+            console.log(error);
+            $("#ajaxMsg").text(error.message);
+        });
+
+    }
+</script>
+
+<div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <input type="hidden" id="miamiID" value="@ViewData["miamiID"]">
+            <div class="form-row align-items-center">
+                <div class="col-4 text-right">
+                    <label for="planName">Plan Name:</label>
+                </div>
+                <div class="col-6">
+                    <input type="text" class="form-control" id="planName">
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="form-row">
+                <div class="col-4"></div>
+                <div class="col-6">
+                    <span><small id="planNameMsg"></small></span>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="form-row align-items-center my-2">
+                <div class="col-4 text-right">
+                    <label for="enrollYear">Enrolled Year:</label>
+                </div>
+                <div class="col-6">
+                    <select class="form-control" id="enrollYear">
+                        @foreach (int year in (int[])ViewData["years"]) { <option value="@year">@year</option> }
+                    </select>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="form-row align-items-center my-2">
+                <div class="col-4 text-right">
+                    <label for="enrollSeason">Enrolled Season:</label>
+                </div>
+                <div class="col-6">
+                    <select class="form-control" id="enrollSeason">
+                        <option value="Spring">Spring</option>
+                        <option value="Summer">Summer</option>
+                        <option value="Fall" selected>Fall</option>
+                        <option value="Winter">Winter</option>
+                    </select>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="form-row align-items-center my-2">
+                <div class="col-4 text-right">
+                    <label for="planLength">Plan Length:</label>
+                </div>
+                <div class="col-6">
+                    <select class="form-control" id="planLength">
+                        <option value="3">3 years</option>
+                        <option value="4" selected>4 years</option>
+                        <option value="5">5 years</option>
+                    </select>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="form-row align-items-center my-2">
+                <div class="col-4 text-right">
+                    <label for="degree">Degree:</label>
+                </div>
+                <div class="col-6">
+                    <select class="form-control" id="degree">
+                        @foreach (Degree degree in (List<Degree>)ViewData["degrees"]) { <option value="@degree.DegreeID">@degree.DegreeName</option> }
+                    </select>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="form-row my-3">
+                <div class="col-4"></div>
+                <div class="col-6">
+                    <button type="button" class="btn btn-danger" id="create" onclick="submitPlan()">Create</button>
+                </div>
+                <div class="col-2"></div>
+            </div>
+            <div class="text-center my-3" id="ajaxMsg"></div>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
