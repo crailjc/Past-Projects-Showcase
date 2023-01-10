@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PokemonProject.MainPage">
+
+    <StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Button x:Name="TeamButton" Text="Go to team?" Clicked="TeamButton_Clicked" HorizontalOptions="FillAndExpand"/>
+            <Button x:Name="SettingsButton" Text="Settings" Clicked="SettingsButton_Clicked"/>
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+            <Entry x:Name="PokeEntry" HorizontalOptions="FillAndExpand" TextChanged="PokeEntry_TextChanged" Placeholder="Search by ID or name"/>
+        </StackLayout>
+        <StackLayout>
+            <ListView x:Name="PokemonList" HorizontalOptions="FillAndExpand" ItemSelected="PokemonList_ItemSelected"/>
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>

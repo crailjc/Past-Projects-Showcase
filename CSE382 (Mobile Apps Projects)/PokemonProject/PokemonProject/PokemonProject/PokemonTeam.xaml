@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PokemonProject.PokemonTeam">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <Grid Padding="0,0,0,0" HorizontalOptions="FillAndExpand">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width = "*" />
+                    <ColumnDefinition Width = "*" />
+                    <ColumnDefinition Width = "*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height = "*" />
+                    <RowDefinition Height = ".5*"/>
+                    <RowDefinition Height = "*" />
+                    <RowDefinition Height = ".5*"/>
+                </Grid.RowDefinitions>
+
+                <Image x:Name="Pokemon1" WidthRequest="250" HeightRequest="250" Grid.Column="0" Grid.Row="0" Source="sprites/0.png"/>
+                <StackLayout Grid.Column="0" Grid.Row="1" Orientation="Vertical">
+                    <Label x:Name="Pk1_Name" Text="No Name" HorizontalOptions="CenterAndExpand"/>
+                    <Button x:Name="Pk1_Clear" Text="Clear?" HorizontalOptions="CenterAndExpand" Clicked="Clear_Clicked" AutomationId="1"/>
+                </StackLayout>
+                
+                <Image x:Name="Pokemon2" WidthRequest="200" HeightRequest="250" Grid.Column="1" Grid.Row="0" Source="sprites/0.png"/>
+                <StackLayout Grid.Column="1" Grid.Row="1" Orientation="Vertical">
+                    <Label x:Name="Pk2_Name" Text="No Name" HorizontalOptions="CenterAndExpand" />
+                    <Button x:Name="Pk2_Clear" Text="Clear?" HorizontalOptions="CenterAndExpand" Clicked="Clear_Clicked" AutomationId="2"/>
+                </StackLayout>
+                <Image x:Name="Pokemon3" WidthRequest="250" HeightRequest="250" Grid.Column="2" Grid.Row="0" Source="sprites/0.png"/>
+                <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Vertical">
+                    <Label x:Name="Pk3_Name" Text="No Name" HorizontalOptions="CenterAndExpand" />
+                    <Button x:Name="Pk3_Clear" Text="Clear?" HorizontalOptions="CenterAndExpand" Clicked="Clear_Clicked" AutomationId="3"/>
+                </StackLayout>
+                <Image x:Name="Pokemon4" WidthRequest="250" HeightRequest="250" Grid.Column="0" Grid.Row="2" Source="sprites/0.png"/>
+                <StackLayout Grid.Column="0" Grid.Row="3" Orientation="Vertical">
+                    <Label x:Name="Pk4_Name" Text="No Name" HorizontalOptions="CenterAndExpand" />
+                    <Button x:Name="Pk4_Clear" Text="Clear?" HorizontalOptions="CenterAndExpand" Clicked="Clear_Clicked" AutomationId="4"/>
+                </StackLayout>
+                <Image x:Name="Pokemon5" WidthRequest="250" HeightRequest="250" Grid.Column="1" Grid.Row="2" Source="sprites/0.png"/>
+                <StackLayout Grid.Column="1" Grid.Row="3" Orientation="Vertical">
+                    <Label x:Name="Pk5_Name" Text="No Name" HorizontalOptions="CenterAndExpand" />
+                    <Button x:Name="Pk5_Clear" Text="Clear?" HorizontalOptions="CenterAndExpand" Clicked="Clear_Clicked" AutomationId="5"/>
+                </StackLayout>
+                <Image x:Name="Pokemon6" WidthRequest="250" HeightRequest="250" Grid.Column="2" Grid.Row="2" Source="sprites/0.png"/>
+                <StackLayout Grid.Column="2" Grid.Row="3" Orientation="Vertical">
+                    <Label x:Name="Pk6_Name" Text="No Name" HorizontalOptions="CenterAndExpand" />
+                    <Button x:Name="Pk6_Clear" Text="Clear?" HorizontalOptions="CenterAndExpand" Clicked="Clear_Clicked" AutomationId="6"/>
+                </StackLayout>
+            </Grid>
+            <Button Text="Clear Entire Team?" Clicked="ClearTeam_Clicked"/>
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

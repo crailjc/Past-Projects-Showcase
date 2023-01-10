@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PokemonProject.settings">
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Label Text="Units? "/>
+                <Picker x:Name="UnitsPicker" SelectedIndexChanged="UnitsPicker_SelectedIndexChanged">
+                    <Picker.Items>
+                        <x:String>Legacy</x:String>
+                        <x:String>Metric</x:String>
+                        <x:String>Standard</x:String>
+                    </Picker.Items>
+                </Picker>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Label Text="Play sound automatically?"/>
+                <Switch x:Name="soundSwitch" IsToggled="True" Toggled="Switch_Toggled"/>
+            </StackLayout>
+        </StackLayout>
+        
+
+    </ContentPage.Content>
+</ContentPage>

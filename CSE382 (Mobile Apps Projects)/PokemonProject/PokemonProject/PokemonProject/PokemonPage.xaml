@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PokemonProject.PokemonPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Image x:Name="bigImage" HeightRequest="200" WidthRequest="200"/>
+            <Image HeightRequest="50" WidthRequest="50" Source="sprites/soundicon.png" HorizontalOptions="EndAndExpand">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Tapped="TapGestureRecognizer_Tapped"
+                        NumberOfTapsRequired="1"
+                    />
+                </Image.GestureRecognizers>
+            </Image>
+            <Button x:Name="addToTeam" Text="Add To Team?" WidthRequest="200" Clicked="addToTeam_Clicked"/>
+            <Label x:Name="nameLabel" Text="Name: "/>
+            <Label x:Name="pokemonType" Text="Type: "/>
+            <Label x:Name="GenaricInfo"/>
+            <Entry x:Name="moveSearch" Placeholder="Search Move" TextChanged="moveSearch_TextChanged"/>
+            <StackLayout>
+                <Label Text="Moves:"/>
+                <ListView x:Name="MoveList" HorizontalOptions="FillAndExpand" ItemSelected="MoveList_ItemSelected"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

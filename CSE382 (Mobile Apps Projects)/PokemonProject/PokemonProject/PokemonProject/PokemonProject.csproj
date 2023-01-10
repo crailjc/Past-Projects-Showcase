@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="001 - Bulbasaur.wav" />
+    <None Remove="1.mp3" />
+    <None Remove="10.mp3" />
+    <None Remove="11.mp3" />
+    <None Remove="12.mp3" />
+    <None Remove="13.mp3" />
+    <None Remove="14.mp3" />
+    <None Remove="15.mp3" />
+    <None Remove="16.mp3" />
+    <None Remove="17.mp3" />
+    <None Remove="18.mp3" />
+    <None Remove="19.mp3" />
+    <None Remove="2.mp3" />
+    <None Remove="20.mp3" />
+    <None Remove="3.mp3" />
+    <None Remove="4.mp3" />
+    <None Remove="5.mp3" />
+    <None Remove="6.mp3" />
+    <None Remove="7.mp3" />
+    <None Remove="8.mp3" />
+    <None Remove="9.mp3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="11.mp3" />
+    <EmbeddedResource Include="12.mp3" />
+    <EmbeddedResource Include="13.mp3" />
+    <EmbeddedResource Include="14.mp3" />
+    <EmbeddedResource Include="15.mp3" />
+    <EmbeddedResource Include="16.mp3" />
+    <EmbeddedResource Include="17.mp3" />
+    <EmbeddedResource Include="18.mp3" />
+    <EmbeddedResource Include="19.mp3" />
+    <EmbeddedResource Include="20.mp3" />
+    <EmbeddedResource Include="7.mp3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="1.mp3" />
+    <EmbeddedResource Include="10.mp3" />
+    <EmbeddedResource Include="2.mp3" />
+    <EmbeddedResource Include="3.mp3" />
+    <EmbeddedResource Include="4.mp3" />
+    <EmbeddedResource Include="5.mp3" />
+    <EmbeddedResource Include="6.mp3" />
+    <EmbeddedResource Include="8.mp3" />
+    <EmbeddedResource Include="9.mp3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.6.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="PokemonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PokemonTeam.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="settings.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
