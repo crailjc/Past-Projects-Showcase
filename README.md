@@ -1,7 +1,7 @@
 # Past-Projects-Showcase
 This repo has a variety of projects that I have done throughout my time at Miami University.
 
-## Explanation of each 
+## Explanation of each folder
 - CSE 374 Algorithms 1 (JAVA). Design, analysis, and implementation of algorithms and data structures. This folder includes my final project which is a written report of the various searching algorithms with a report on each one.
 - CSE 382 Mobile Apps (C#, XMAL). Implementation of cross platform apps. This folder includes my final project which is a self designed and made mobile app applying everything from this class.
 - CSE 383 Web Apps (HTML, JS, CSS, PHP). Introduction to the software, concepts and methodologies for designing and implementing web applications. This folder includes my final project which is a self designed and made web app for telling the weather, making use of APIs and a AWS server. 
