@@ -1,0 +1,107 @@
+﻿Name: 
+        -I - interactive mode
+Description
+        Allows the user to connect to the MySql database cse278. Once connected the user can use the input any standard SQL query and then the query will be sent to the database and if the Query is correct then it will be returned in the format of ------Query Result------ result then on a new line the returned query and then on another new line is -------End Result-------. If the user wishes to exit the interactive mode typing quit or doing ctrl+D will allow the user to exit the interactive mode. If the query has incorrect syntax then the terminal will print: “Query: ‘your query’ Query is not correct SQL syntax.
+
+
+The following options are available:
+
+
+* Note there are no options available for this command
+
+
+Example: 
+* The following is starting the interactive mode and entering a basic SQL query
+>-I
+> Select * from Product;
+>-----Query Result--------
+>| 1 | Product1 | 50 | 1 | Canon |
+>| 2 | Product2 | 150 | 2 | GizmoWorks |
+>| 3 | Product3 | 150 | 2 | Hitachi |
+>--------End Result--------
+
+
+
+
+Name: 
+-L  Load input mode
+
+
+Description:
+        Allows the user to take a file and load a query and execute that query into the database. Requires that the given file has the proper query or else nothing will happen. If the file has an improper SQL query for one of its lines the terminal will print: “Query: ‘your query’ Query is not correct SQL syntax. If the query is in the correct syntax then the terminal will output “Data line i loaded” where i is the line number from the file that has been loaded.
+
+
+The following options are available:
+        
+        - fileName Gives the Load the necessary file to be loaded and used to query the database
+
+
+Examples:
+        The following is how to properly load a file using the load input mode, where load_input.csv is an already preexisting file with three lines.
+                >-L load_input.csv
+                >Data line 1 loaded
+                >Data line 2 loaded
+                >Data line 3 loaded
+
+
+Name: 
+        -C -Create table mode 
+
+
+Description:
+        Allows the user to load a file and parse the file to get the necessary information from it to make and create a create table query. If there is an incorrect value for the create table the terminal will output: “Query: ‘your query’ Query is not correct SQL syntax. If the query is in the correct syntax then the terminal will output “Table tablename Created”, meaning that the table where tablename is the name of the table has been correctly created into the database.
+
+
+The following options are available:
+        
+         - fileName Gives the create the necessary file to be loaded and used to creat the table in the database
+
+
+Example:
+        The following is how to create a table in the database using the preexisting file create_input.csv where there are 3 tables being created
+
+
+                >-C create_input.csv
+                >Table muid_1 Created
+                >Table muid_2 Created
+                >Table muid_3 Created
+
+
+Name: 
+        -D - Drop table mode
+
+
+Description:
+        Allows the user to drop any table from the SQL database 278 along as the given table exists within the database. If the table exists within the database then the termina        l will print “Table tablename dropped” where tablename is the name of the table in the database that has been dropped. If the table does not exist within the database then the terminal will print out: “Query: DROP TABLE tablename Query is not in correct SQL syntax”. 
+
+
+The following options are available
+
+
+        -TableName give the drop table mode the necessary tablename to be dropped from the table
+
+
+Example:
+        The following is how to drop a table from the data base named muid_tmp
+                
+                >-D muid_tmp
+                >Table muid_tmp Dropped
+
+
+Name:
+        -W -Write data mode
+
+
+Description:
+        Allows the user to load a file with certain queries and then have the results of the queries stored in a file as long as the queries are incorrect SQL syntax and the returned query is not blank. Each line in the file is an individual query and a query is build from that line, executed, and written in the output file specified by the user. If the query results in some SQL syntax error it will not be written to the file
+
+
+The following options are available:
+        
+        -Inputfile Outputfile give the write data mode the Inputfile where the queries are generated from and the Outputfile where the queries are written to.
+
+
+Example: 
+        The following is how to read a file generate the queries from the file and then output the results of the queries into an output file. Note all queries within write_input are in correct SQL syntax 
+        
+                >-W write_input.csv outfile.csv

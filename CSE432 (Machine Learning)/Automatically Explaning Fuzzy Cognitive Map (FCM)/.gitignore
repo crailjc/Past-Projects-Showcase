@@ -1,0 +1,12 @@
+.DS_Store
+.venv
+.vscode
+*.zip
+__pycache__/*
+.ipynb_checkpoints/
+__pycache__
+.DS_Store
+evaluate.json
+*train.jsonl
+*test.jsonl
+*valid.jsonl
